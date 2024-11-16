@@ -13,7 +13,6 @@ let currentTab = 'MainButton';
 let tabsArray = [];
 let boxElements = [];
 let timerState = false;
-let timer;
 
 const startTime_T = -350;
 const endTime_T = 900;
@@ -319,7 +318,7 @@ class CapsuleObject {
 
         this.altitude = num;
         this.atmospherpicLayer = 1;
-        console.log(document.querySelector('.capStatAltContainer'))
+        //console.log(document.querySelector('.capStatAltContainer'))
         this.altitudeOutput = createAltitudeDataDisplay(capsuleNumber, document.querySelector('.capStatAltContainer'), testNum);
         // 10km, 50km, 85km, 500km
         this.temperatureMeter = createTemperatureMeter(document.querySelector('.temperatureMeterContainer'), capsuleNumber, true, testNum);
@@ -354,7 +353,7 @@ class Setting {
         this.onOffBool = onOffBool;
         this.performanceBool = performanceBool;
         this.func = func;
-        console.log(this.func)
+        //console.log(this.func)
 
         if (this.onOffBool){
             this.active = false;
@@ -613,13 +612,16 @@ function createBoxStructure(parent, rows, rowLengths, boxNames, titles, height){
 
 
 function createSO2Bar(capsuleNumber, container, testNum) {
-    let currentSO2Container = createHTMLChildElement(container, 'div', 'SO2BarContainer', null, `SO2BarContainer${capsuleNumber}-P${currentPage}`);
+
+    let SO2BarGraphic = createHTMLChildElement(container, 'div', 'SO2BarGraphic', null, `SO2BarGraphic${capsuleNumber}`);
+
+    let currentSO2Container = createHTMLChildElement(container, 'div', 'SO2BarContainer', null, `SO2BarContainer${capsuleNumber}`);
 
     let currentSO2Box = createHTMLChildElement(currentSO2Container, 'div', `SO2BarBox`, null, `SO2BarBox${capsuleNumber}-P${currentPage}`);
 
-    let currentSO2Num = createHTMLChildElement(currentSO2Box, 'div', 'SO2Num', `${testNum}`, `SO2Num${capsuleNumber}-P${currentPage}`);
+    let currentSO2Num = createHTMLChildElement(currentSO2Box, 'div', 'SO2Num', `${testNum}`, `SO2Num${capsuleNumber}`);
 
-    let currentSO2Unit = createHTMLChildElement(currentSO2Num, 'div', 'SO2Unit', 'ppm', `SO2Unit${capsuleNumber}-P${currentPage}`);
+    let currentSO2Unit = createHTMLChildElement(currentSO2Num, 'div', 'SO2Unit', 'ppm', `SO2Unit${capsuleNumber}`);
     
     //console.log(currentSO2Container);
 
@@ -860,7 +862,9 @@ function updateCapsuleSpecifiedStatus(statusTitle, newStatus, capsuleObj){
 function updateStatusPointColor(capsuleObj) {
     if (currentPage == 0){
 
-        document.getElementById(`capStatDot${capsuleObj.capsuleNumber}`).style.backgroundColor = getStatusColor(capsuleObj.generalStatus);
+        ifElementExists(document.getElementById(`capStatDot${capsuleObj.capsuleNumber}`), (elem) => {
+            elem.style.backgroundColor = getStatusColor(capsuleObj.generalStatus)
+        });
 
     } else {
 
@@ -890,23 +894,6 @@ function getStatusColor(status){
 function createPressureBox(container, numOfCapsules, capsuleNumber){
 
     let pressCont = createHTMLChildElement(container, 'div', 'pressureMeterContainer', null)
-
-    // if(numOfCapsules != 1){
-
-        
-    //     for(let i = 1; i <= numOfCapsules; i++) {
-
-    //         createPressureMeter(pressCont, i, true, numOfCapsules);
-
-    //     }
-
-    //     return;
-
-    // } else {
-
-    //     createPressureMeter(pressCont, capsuleNumber, false, 1);
-
-    // }
 
 }
 
@@ -1096,7 +1083,7 @@ async function sendDataToPython(endpoint, data){
 function ifElementExists(element, func) {
     if (element) {
         //console.log('work');
-        func();
+        return func(element);
     }
 
     else {
@@ -1474,7 +1461,7 @@ function getCurrentTimeSign(time){
 
 function updateTimerEvents(){
     let stageBoxes = document.querySelectorAll('.stageBox');
-    console.log(stageBoxes);
+    //console.log(stageBoxes);
 
     for (let i = 0; i < stageBoxes.length; i++){
         if (-(currentTime_T - timerEvents_inT[i]) <= 0){
@@ -1493,6 +1480,18 @@ function updateTimerEvents(){
             stageBoxes[i].style.boxShadow = '0px 0px 10px rgba(230,0,0,0.5)';
 
         }
+    }
+    let restartButton = document.querySelector('.restartTimerButton');
+    let restartArrow = document.querySelector('.restartArrow');
+    if(currentTime_T === -350){
+        restartButton.style.opacity = 0.5;
+
+        restartButton.style.pointerEvents = 'none';
+
+    } else {
+        restartButton.style.opacity = 1;
+
+        restartButton.style.pointerEvents = 'all';
     }
 }
 // Future function that changes graphics upon a change in time
@@ -1547,12 +1546,12 @@ function createSettingSlider(name, object, range, defaultVal, stepVal){
     sliderNumInput.min = min;
     sliderNumInput.max = max;
     sliderNumInput.setAttribute('value', defaultVal);
-    console.log(min)
+    //console.log(min)
     let sliderBox = createHTMLChildElement(sliderContainer, 'div', 'settingSliderBox', null, `settingSliderBox${shortenedName}`);
     let sliderRangeMin = createHTMLChildElement(sliderBox, 'div', 'settingSliderRange', min, `settingSliderRangeMin${shortenedName}`);
 
     let slider = createHTMLChildElement(sliderBox, 'input', 'settingSlider', null, `settingSlider${shortenedName}`);
-    console.log(slider)
+    //console.log(slider)
     slider.type = 'range';
     slider.step = stepVal;
     slider.min = min;
@@ -1640,7 +1639,7 @@ function setupSettingSlider(settingObject, func){
 }
 
 
-window.addEventListener('resize', () => {resizeToggleSwitch(); adjustTitle();});
+window.addEventListener('resize', () => {resizeToggleSwitch(); resizeElements();});
 
 
 
@@ -1688,7 +1687,7 @@ function testSO2Bar(){
     for(let i = 0; i <= 50; i++){
         setTimeout(() => {
             let rgbDiff = Math.round(i * 2.55 * 2);
-            document.documentElement.style.setProperty('--c', `conic-gradient(from 270deg at 50% 100%, red 0%, rgb(${rgbNum - rgbDiff}, 0, ${rgbDiff}) ${i}%,  rgba(0, 0, 0, 0) ${i}%`);
+            document.getElementById('SO2BarContainer2-P0::before').style.setProperty('--c', `conic-gradient(from 270deg at 50% 100%, red 0%, rgb(${rgbNum - rgbDiff}, 0, ${rgbDiff}) ${i}%,  rgba(0, 0, 0, 0) ${i}%`);
         }, ((10 * i) + i*5));
         console.log("yo");
     } 
@@ -1700,38 +1699,87 @@ function testSO2Bar2(){
         setTimeout(() => {
             let rgbDiff = Math.round(i * 2.55);
             document.documentElement.style.setProperty('--c', `conic-gradient(from 270deg at 50% 100%, red 0%, rgb(${rgbDiff}, 0, ${rgbNum - rgbDiff}) ${50 - i}%,  rgba(0, 0, 0, 0) ${50 - i}%`);
-        }, (10 * i) + i*5);
+        }, (10 * i) + i*3);
         console.log("yo2");
     } 
 }
 
-testSO2Bar();
-setTimeout(testSO2Bar2, 1500);
+// testSO2Bar();
+// setTimeout(testSO2Bar2, 1500);
 
-setInterval(() => {
-    testSO2Bar();
-    setTimeout(testSO2Bar2, 1500);
-}, 5000);
+// setInterval(() => {
+//     testSO2Bar();
+//     setTimeout(testSO2Bar2, 1500);
+// }, 5000);
 
-function magRad(initRad, maxRad){
-    let currentRad = initRad;
-    let radDiff = maxRad - initRad;
-    console.log(window.getComputedStyle(document.getElementById('innerCircle')).getPropertyValue('outline-width'))
+// arguments must be passed with decimals representing percentages (i.e. 1 => 100%, 0.3 => 30%)
+function magRad(initRadPercentage, maxRadPercentage, radius, steps){
+    let currentRadPercentage = initRadPercentage;
+    let currentRadius = radius * currentRadPercentage;
+    let magNumber = document.getElementById('magNumber');
+    let innerCircle = document.getElementById('innerCircle');
+
+    resizeElements();
+    //console.log(window.getComputedStyle(document.getElementById('innerCircle')).getPropertyValue('outline-width'));
     let timerId = setInterval(() => {
-        if ((currentRad >= maxRad) || currentPage != 0){
-            currentRad = maxRad;
+
+        let outerCircleSize = document.documentElement.style.getPropertyValue('--magnetosphereSize');
+
+        let maxPossibleDimension = parseInt(outerCircleSize) - innerCircle.offsetWidth - 20;
+
+
+        if ((currentRadPercentage >= maxRadPercentage) || !ifElementExists(document.querySelector('.MagBoxContent'), () => {return true;})){
+
+            magNumber.textContent = (radius * maxRadPercentage).toFixed(2);
+            currentRadPercentage = maxRadPercentage;
+            innerCircle.style.outlineWidth = `calc(var(--magnetosphereSize) * ${currentRadPercentage * 0.36}px)`;
+
             clearInterval(timerId);
         } else {
-            currentRad += radDiff/100
-            document.getElementById('innerCircle').style.setProperty('outline-width', `${currentRad}vmin`);
-            document.getElementById('magNumber').textContent = `${Math.round(currentRad)}00`;
-            //console.log(`${currentRad} / ${maxRad}`);
+            // Adds a
+            currentRadPercentage += maxRadPercentage/steps;
+
+            currentRadius = radius * currentRadPercentage;
+
+            innerCircle.style.outlineWidth = `calc(var(--magnetosphereSize) * ${currentRadPercentage * 0.36}px)`;
+
+            magNumber.textContent = currentRadius.toFixed(2);
         }
+        console.log(maxPossibleDimension, maxPossibleDimension * currentRadPercentage);
     }, 100);
+}
+
+function changeMagnetosphereRadius(endRadius, radius){
+
+    let magnetosphereElementExists = ifElementExists(document.querySelector('.MagBoxContent'), () => {return true;});
+
+    if(magnetosphereElementExists){
+        let magNumber = document.getElementById('magNumber');
+        let innerCircle = document.getElementById('innerCircle');
+        let outerCircleSize = document.documentElement.style.getPropertyValue('--magnetosphereSize');
+        let maxPossibleDimension = parseInt(outerCircleSize) - innerCircle.offsetWidth - 20;
+
+        let targetRadiusToRadiusRatio = endRadius/radius;
+        innerCircle.style.outlineWidth = `calc(var(--magnetosphereSize) * ${targetRadiusToRadiusRatio * 0.36}px)`;
+        magNumber.textContent = endRadius.toFixed(2);
+    }
 
 }
 
-magRad(0, 12);
+let magnetosphereRadius = 0;
+setInterval(() => {
+    if (magnetosphereRadius === 5){
+        magnetosphereRadius = 0;
+        changeMagnetosphereRadius(0, 5);
+    } else {
+        changeMagnetosphereRadius(++magnetosphereRadius, 5);
+    }
+}, 1000);
+
+changeMagnetosphereRadius(3, 5);
+
+
+//magRad(0, 1, 5, 10);
 
 function returnValueBasedOnCriteria(criteria, trueVal, falseVal){
     if (criteria) {
@@ -1741,10 +1789,22 @@ function returnValueBasedOnCriteria(criteria, trueVal, falseVal){
     }
 }
 
-function adjustTitle(){
+function resizeElements(){
     let windowWidth = window.innerWidth;
     let title = document.querySelector('.title');
     let subtitle = document.querySelector('.subtitle');
+
+    
+    ifElementExists(document.querySelector('.MagBoxContent'), (elem) => {
+        let magnetosphereContainer; 
+        magnetosphereContainer = elem;
+        let minimumMagnetosphereDimension = Math.min(magnetosphereContainer.clientWidth, magnetosphereContainer.clientHeight);
+        document.documentElement.style.setProperty('--magnetosphereSize', minimumMagnetosphereDimension * 0.9);
+    });
+
+    // console.log(magnetosphereContainer);
+
+    // console.log(document.documentElement.style.getPropertyValue('--magnetosphereSize'));
     // console.log('adjusting title');
     // console.log(document.querySelector('title'))
     if (windowWidth <= 1000) {
@@ -1753,14 +1813,56 @@ function adjustTitle(){
         setTimeout(() => {
             title.innerText = "";
             subtitle.innerText = "";
-        }, 500)
+        }, 500);
+
+        graphArray.forEach((elem) => {
+            
+            if(elem.height !== 180){
+                elem.resize(150, 180);
+                console.log('test 1');
+            }
+
+        });
+
+        // Gives the titles a shortened name
+        document.querySelectorAll('.boxTitle').forEach((elem, i) => {
+            let currentShortenedTitle = pageProperties[currentPage].titles[i].substring(0,3);
+            elem.textContent = `${currentShortenedTitle}.`;
+        });
+
     } else if (windowWidth <= 1200){
         title.style.opacity = 1;
         subtitle.style.opacity = 1;
         title.innerText = "RSX '24 Dashboard";
         subtitle.innerText = "COC";
+
+        graphArray.forEach((elem) => {
+            if(elem.height !== 240){
+                elem.resize(200, 240);
+                console.log('test 2');
+            }
+        });
+
+        // Gioves the titles a shortened name
+        document.querySelectorAll('.boxTitle').forEach((elem, i) => {
+            let currentTitle = pageProperties[currentPage].titles[i];
+            elem.textContent = currentTitle;
+        });
+
     } else {
         title.innerText = "RockSatX 2024 Dashboard";
         subtitle.innerText = "College of the Canyons";
+
+        graphArray.forEach((elem) => {
+
+            if(elem.height !== 300){
+                elem.resize(250, 300);
+                console.log('test 3');
+            }
+
+        });
+
     }
 }
+
+resizeElements();

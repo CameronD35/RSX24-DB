@@ -34,6 +34,8 @@
 
     --numOfCapsules: 3;
     --switchSize: 0px;
+
+    --magnetosphereSize: unset;
 }
 
 /* BACKGROUND */
@@ -455,7 +457,8 @@ body{
     padding: calc(var(--barThickness) - 0px) calc(var(--barThickness) - 0px) 0 calc(var(--barThickness) - 0px);
     border-radius: var(--barSize) var(--barSize) 0 0;
     border-bottom: 0;
-    background: var(--c, conic-gradient(from 270deg at 50% 100%, red 0%, blue 50%, rgba(0, 0, 0, 0) 50%));
+    --c: conic-gradient(from 270deg at 50% 100%, red 0%, blue 50%, rgba(0, 0, 0, 0) 50%);
+    background: var(--c);
     -webkit-mask: 
             linear-gradient(#fff 0 0) content-box,
             linear-gradient(#fff 0 0);
@@ -757,8 +760,8 @@ body{
 }
 
 .outerCircle{
-    height: 30vmin;
-    width: 30vmin;
+    height: calc(var(--magnetosphereSize) * 0.9px);
+    width: calc(var(--magnetosphereSize) * 0.9px);
     border-radius: 100%;
     outline: 5px solid var(--mainColor);
     stroke: 5px;
@@ -766,12 +769,12 @@ body{
     display: flex;
     align-items: center;
     justify-content: center;
-    background-image: radial-gradient(rgba(255, 255, 255, 0) 3vmin, rgba(79, 172, 254, 0.5) 3vmin, rgba(13, 94, 165, 0.5));
+    background-image: radial-gradient(rgba(255, 255, 255, 0) calc(var(--magnetosphereSize) * 0.1px), rgba(79, 172, 254, 0.5) calc(var(--magnetosphereSize) * 0.1px), rgba(13, 94, 165, 0.5));
 }
 
 .innerCircle{
-    height: calc(6vmin);
-    width: calc(6vmin);
+    height: calc(var(--magnetosphereSize) * 0.2px);
+    width: calc(var(--magnetosphereSize) * 0.2px);
     border-radius: 100%;
     background-color: none;
     outline-width: 0px; 
@@ -783,7 +786,7 @@ body{
 .magNumber{
     position: fixed;
     color: var(--mainColor);
-    font-size: 10vmin;
+    font-size: calc(var(--magnetosphereSize) * 0.3px);
     text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 }
 
