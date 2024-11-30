@@ -103,15 +103,13 @@ let pageManage = {
         //console.log(boxElements);
 
         if(!pageStart){
-            capsule1.changeParent(document.querySelector('.SO2BoxContent'), capsule1.sulfurDioxideBar);
-            capsule1.changeParent(document.querySelector('.SO2BoxContent'), capsule1.sulfurDioxideChart);
+            capsule1.changeParent(document.querySelector('.SO2BoxContent'), capsule1.so2Section);
             capsule1.sulfurDioxideChartSVG.resize(250, 300);
             capsule1.changeParent(document.querySelector('.pressureMeterContainer'), capsule1.pressureMeter);
             capsule1.changeParent(document.querySelector('.temperatureMeterContainer'), capsule1.temperatureMeter);
             capsule1.changeParent(document.querySelector('.capStatAltContainer'), capsule1.altitudeOutput);
 
-            capsule2.changeParent(document.querySelector('.SO2BoxContent'), capsule2.sulfurDioxideBar);
-            capsule2.changeParent(document.querySelector('.SO2BoxContent'), capsule2.sulfurDioxideChart);
+            capsule2.changeParent(document.querySelector('.SO2BoxContent'), capsule2.so2Section);
             capsule2.sulfurDioxideChartSVG.resize(250, 300);
             capsule2.changeParent(document.querySelector('.pressureMeterContainer'), capsule2.pressureMeter);
             capsule2.changeParent(document.querySelector('.temperatureMeterContainer'), capsule2.temperatureMeter);
@@ -148,8 +146,7 @@ let pageManage = {
         setCurrentBoxes(CSSClasses);
         //console.log(boxElements);
 
-        capsule1.changeParent(document.querySelector('.SO2BoxContent'), capsule1.sulfurDioxideBar);
-        capsule1.changeParent(document.querySelector('.SO2BoxContent'), capsule1.sulfurDioxideChart);
+        capsule1.changeParent(document.querySelector('.SO2BoxContent'), capsule1.so2Section);
         capsule1.changeParent(document.querySelector('.MisStatBoxContent'), capsule1.missionStatusPoints);
         capsule1.changeParent(document.querySelector('.pressureMeterContainer'), capsule1.pressureMeter);
         capsule1.changeParent(document.querySelector('.temperatureMeterContainer'), capsule1.temperatureMeter);
@@ -184,8 +181,7 @@ let pageManage = {
         setCurrentBoxes(CSSClasses);
         //console.log(boxElements);
 
-        capsule2.changeParent(document.querySelector('.SO2BoxContent'), capsule2.sulfurDioxideBar);
-        capsule2.changeParent(document.querySelector('.SO2BoxContent'), capsule2.sulfurDioxideChart);
+        capsule2.changeParent(document.querySelector('.SO2BoxContent'), capsule2.so2Section);
         capsule2.changeParent(document.querySelector('.MisStatBoxContent'), capsule2.missionStatusPoints);
         capsule2.changeParent(document.querySelector('.pressureMeterContainer'), capsule2.pressureMeter);
         capsule2.changeParent(document.querySelector('.temperatureMeterContainer'), capsule2.temperatureMeter);
@@ -278,8 +274,9 @@ class CapsuleObject {
         
 
         if(hasSO2Sensor){
-            this.sulfurDioxideBar = createSO2Bar(capsuleNumber, document.querySelector('.SO2BoxContent'), testNum);
-            this.sulfurDioxideChartArray = createSO2Graph(capsuleNumber, document.querySelector('.SO2BoxContent'));
+            this.so2Section = createSO2Structure(capsuleNumber, document.querySelector('.SO2BoxContent'));
+            this.sulfurDioxideBar = createSO2Bar(capsuleNumber, this.so2Section, testNum);
+            this.sulfurDioxideChartArray = createSO2Graph(capsuleNumber, this.so2Section);
 
             this.sulfurDioxideChart = this.sulfurDioxideChartArray[0];
 
@@ -497,7 +494,10 @@ function setupSlider(slider, valueDisplay, maxVal){
             } else {
                 slider.value = `${valueDisplay.value}`;
             }
+            currentTime_T = slider.value - 350;
+            let sign = getCurrentTimeSign(currentTime_T);
 
+            changeTime(sign, currentTime_T);
             valueDisplay.blur();
             //console.log(await sendDataToPython("http://127.0.01:5000/dashboard", slider.value));
             //document.querySelector('.randomNumberThing').textContent = await sendDataToPython("http://127.0.01:5000/dashboard", slider.value);
@@ -610,6 +610,11 @@ function createBoxStructure(parent, rows, rowLengths, boxNames, titles, height){
     }
 }
 
+function createSO2Structure(capsuleNumber, container){
+    let so2Section = createHTMLChildElement(container, 'div', 'SO2Section', null, `SO2Section${capsuleNumber}`);
+
+    return so2Section;
+}
 
 function createSO2Bar(capsuleNumber, container, testNum) {
 
@@ -1010,7 +1015,7 @@ function createTemperatureMeter(container, capsuleNumber, includeLogo, num){
 
         let currentTemperatureBox = createHTMLChildElement(container, 'div', 'temperatureMeterBox', null,`temperatureMeterBox${capsuleNumber}`);
         currentTemperatureBox.style.setProperty('height',`calc(51%/var(--numOfCapsules))`);
-        currentTemperatureBox.style.setProperty('margin',`calc(5vw/var(--numOfCapsules)) 0`);
+        currentTemperatureBox.style.setProperty('margin',`calc(8vh/var(--numOfCapsules)) 0`);
 
         if (includeLogo){
 
@@ -1137,14 +1142,12 @@ let popUpScr = document.querySelector('.popUpScreen');
 popUpScr.style.width = '0';
 popUpScr.style.height = '0';
 
-capsule1.changeParent(document.querySelector('.SO2BoxContent'), capsule1.sulfurDioxideBar);
-capsule1.changeParent(document.querySelector('.SO2BoxContent'), capsule1.sulfurDioxideChart);
+capsule1.changeParent(document.querySelector('.SO2BoxContent'), capsule1.so2Section);
 capsule1.changeParent(document.querySelector('.pressureMeterContainer'), capsule1.pressureMeter);
 capsule1.changeParent(document.querySelector('.temperatureMeterContainer'), capsule1.temperatureMeter);
 capsule1.changeParent(document.querySelector('.capStatAltContainer'), capsule1.altitudeOutput);
 
-capsule2.changeParent(document.querySelector('.SO2BoxContent'), capsule2.sulfurDioxideBar);
-capsule2.changeParent(document.querySelector('.SO2BoxContent'), capsule2.sulfurDioxideChart);
+capsule2.changeParent(document.querySelector('.SO2BoxContent'), capsule2.so2Section);
 capsule2.changeParent(document.querySelector('.pressureMeterContainer'), capsule2.pressureMeter);
 capsule2.changeParent(document.querySelector('.temperatureMeterContainer'), capsule2.temperatureMeter);
 capsule2.changeParent(document.querySelector('.capStatAltContainer'), capsule2.altitudeOutput);
@@ -1572,7 +1575,7 @@ function setupSettingSlider(settingObject, func){
 
 
     //console.log('slider value: ' + slider.value);
-    sliderCont.addEventListener('mousedown', () => { turnYellow(sliderNumInput)});
+    sliderCont.addEventListener('mousedown', () => {turnYellow(sliderNumInput)});
 
     sliderCont.addEventListener('mouseup', async () => {
         
@@ -1586,8 +1589,8 @@ function setupSettingSlider(settingObject, func){
         console.log(sliderCont);
     });
 
-    sliderNumInput.onkeydown = function(key){
-        if(key.keyCode == 13){
+    sliderNumInput.addEventListener('keydown', (target) => {
+        if(target.key == 'Enter'){
 
             turnWhite(sliderNumInput);
 
@@ -1606,8 +1609,8 @@ function setupSettingSlider(settingObject, func){
             sliderNumInput.blur();
 
         }
+    })
 
-    }
 
     sliderNumInput.addEventListener('input', () => {
         
@@ -1815,14 +1818,20 @@ function resizeElements(){
             subtitle.innerText = "";
         }, 500);
 
-        graphArray.forEach((elem) => {
+        // graphArray.forEach((elem) => {
             
-            if(elem.height !== 180){
-                elem.resize(150, 180);
-                console.log('test 1');
-            }
+        //     if(elem.height !== 180){
+        //         elem.resize(150, 180);
+        //         console.log('test 1');
+        //     }
 
+        // });
+
+        document.querySelectorAll('.SO2Section').forEach((elem, i) => {
+            elem.style.flexDirection = 'column'
         });
+
+        document.querySelector('.SO2BoxContent').style.justifyContent = 'center';
 
         // Gives the titles a shortened name
         document.querySelectorAll('.boxTitle').forEach((elem, i) => {
@@ -1831,8 +1840,7 @@ function resizeElements(){
         });
 
     } else if (windowWidth <= 1200){
-        title.style.opacity = 1;
-        subtitle.style.opacity = 1;
+        resetSizeToDefault();
         title.innerText = "RSX '24 Dashboard";
         subtitle.innerText = "COC";
 
@@ -1843,13 +1851,9 @@ function resizeElements(){
             }
         });
 
-        // Gioves the titles a shortened name
-        document.querySelectorAll('.boxTitle').forEach((elem, i) => {
-            let currentTitle = pageProperties[currentPage].titles[i];
-            elem.textContent = currentTitle;
-        });
 
     } else {
+        resetSizeToDefault();
         title.innerText = "RockSatX 2024 Dashboard";
         subtitle.innerText = "College of the Canyons";
 
@@ -1862,6 +1866,25 @@ function resizeElements(){
 
         });
 
+    }
+
+    function resetSizeToDefault(){
+        let defaultTest = (title.innerText == "RSX '24 Dashboard")
+        if(!defaultTest){
+            title.style.opacity = 1;
+            subtitle.style.opacity = 1;
+
+            document.querySelectorAll('.boxTitle').forEach((elem, i) => {
+                let currentTitle = pageProperties[currentPage].titles[i];
+                elem.textContent = currentTitle;
+            });
+
+            document.querySelectorAll('.SO2Section').forEach((elem) => {
+                elem.style.flexDirection = 'row'
+            });
+
+            document.querySelector('.SO2BoxContent').style.justifyContent = 'space-evenly';
+        }
     }
 }
 

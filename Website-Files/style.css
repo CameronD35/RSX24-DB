@@ -373,6 +373,7 @@ body{
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow: clip;
 }
 
 #box1{
@@ -408,6 +409,12 @@ body{
 
 /* SULFUR DIOXIDE */
 
+.SO2Section{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
 .SO2BoxContent{
     display: flex;
     width: 100%;
@@ -420,7 +427,7 @@ body{
     width: calc(var(--barSize)*2);
     height: var(--barSize);
     display: inline-block;
-    margin: 75px 0;
+    margin: 5px 1vw;
     position: relative;
     z-index: 0;
     display: flex;
