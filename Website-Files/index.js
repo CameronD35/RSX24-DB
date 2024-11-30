@@ -1805,6 +1805,8 @@ function resizeElements(){
         document.documentElement.style.setProperty('--magnetosphereSize', minimumMagnetosphereDimension * 0.9);
     });
 
+    let so2Box = document.querySelector('.SO2BoxContent');
+
     // console.log(magnetosphereContainer);
 
     // console.log(document.documentElement.style.getPropertyValue('--magnetosphereSize'));
@@ -1831,12 +1833,22 @@ function resizeElements(){
             elem.style.flexDirection = 'column'
         });
 
-        document.querySelector('.SO2BoxContent').style.justifyContent = 'center';
+        ifElementExists(so2Box, () => {
+            so2Box.style.justifyContent = 'center';
+        });
 
         // Gives the titles a shortened name
         document.querySelectorAll('.boxTitle').forEach((elem, i) => {
             let currentShortenedTitle = pageProperties[currentPage].titles[i].substring(0,3);
             elem.textContent = `${currentShortenedTitle}.`;
+        });
+
+        document.querySelectorAll('.capStatText').forEach((elem, i) => {
+            elem.innerHTML = `<img class="capsuleLogo" src="../Image-Assets/C${i+1}.webp">`;
+        });
+
+        document.querySelectorAll('.capAltStatText').forEach((elem, i) => {
+            elem.innerHTML = `<img class="capsuleLogo" src="../Image-Assets/C${i+1}.webp">`;
         });
 
     } else if (windowWidth <= 1200){
@@ -1883,7 +1895,19 @@ function resizeElements(){
                 elem.style.flexDirection = 'row'
             });
 
-            document.querySelector('.SO2BoxContent').style.justifyContent = 'space-evenly';
+            document.querySelectorAll('.capStatText').forEach((elem, i) => {
+                ifElementExists(elem, () => {
+                    elem.innerHTML = `Capsule ${i+1}`;
+                });
+            });
+    
+            document.querySelectorAll('.capAltStatText').forEach((elem, i) => {
+                elem.innerHTML = `Capsule ${i+1}`;
+            });
+
+            ifElementExists(so2Box, () => {
+                so2Box.style.justifyContent = 'space-evenly';
+            });
         }
     }
 }
