@@ -1212,8 +1212,9 @@ function turnToLightMode() {
     document.documentElement.style.setProperty('--pngFilters', 'brightness(0) saturate(100%) invert(12%) sepia(47%) saturate(1029%) hue-rotate(183deg) brightness(85%) contrast(109%)');
 
     document.getElementById('infoButton').style.color = 'white';
-    document.querySelector('.colorModeToggle').style.transform = `translateX(calc(5vw - 30px))`;
-    document.querySelector('.colorModeIcon').style.transform = 'translateX(calc(-5vw + 25px))';
+    let switchWidth = document.querySelector('.colorModeSwitch').getBoundingClientRect().width;
+    document.querySelector('.colorModeToggle').style.transform = `translateX(${switchWidth - 30}px)`;
+    document.querySelector('.colorModeIcon').style.transform = `translateX(${25 - switchWidth}px)`;
     document.querySelector('.colorModeIcon').src = "../Image-Assets/DarkModeIcon.webp";
     document.querySelector('.colorModeSwitch').style.backgroundPositionX = '0%';
     document.querySelector('.colorModeSwitch').style.boxShadow = '0px 0px 15px rgba(255,234, 0, 0.5)';
@@ -1851,6 +1852,17 @@ function resizeElements(){
             elem.innerHTML = `<img class="capsuleLogo" src="../Image-Assets/C${i+1}.webp">`;
         });
 
+        document.querySelectorAll('.atmosphericLayerHeader').forEach((elem, i) => {
+            elem.textContent = `${elem.textContent.substring(0, 3)}.`
+            elem.style.width = '20%';
+        });
+
+        document.querySelector('.bottomText').style.display = 'none';
+        document.querySelector('.bottomInfo').style.justifyContent = 'center';
+
+        document.querySelector('.sliderContainer').style.width = '60%';
+        document.querySelector('.bottomRightSection').style.width = '37.5%';
+
     } else if (windowWidth <= 1200){
         resetSizeToDefault();
         title.innerText = "RSX '24 Dashboard";
@@ -1908,6 +1920,20 @@ function resizeElements(){
             ifElementExists(so2Box, () => {
                 so2Box.style.justifyContent = 'space-evenly';
             });
+
+            // Resets the atmospheric layer titles to their full length 
+            let atmosphericLayerTitlesArray = ['Exosphere', 'Thermosphere', 'Mesosphere', 'Stratosphere', 'Troposphere']
+            document.querySelectorAll('.atmosphericLayerHeader').forEach((elem, i) => {
+                elem.textContent = atmosphericLayerTitlesArray[i]
+                elem.style.width = '40%';
+            });
+
+            document.querySelector('.bottomText').style.display = 'block';
+
+            document.querySelector('.bottomInfo').style.justifyContent = 'space-between';
+
+            document.querySelector('.sliderContainer').style.width = '40%';
+            document.querySelector('.bottomRightSection').style.width = 'auto';
         }
     }
 }
