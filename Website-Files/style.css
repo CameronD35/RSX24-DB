@@ -594,8 +594,12 @@ body{
     cursor: pointer;
 }
 
+.startButtonImg{
+    width: 15px;
+}
+
 .startText{
-    letter-spacing: 5px;
+    letter-spacing: 3px;
     font-style: italic;
     font-weight: 700;
     z-index: 1;

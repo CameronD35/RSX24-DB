@@ -5,6 +5,8 @@ import createHTMLChildElement from './modules/createElement.js';
 
 import logoAnimationSetup from './modules/logoAnimation.js';
 
+let dashMode = 0;
+
 //import setupSlider from './modules/slider.js';
 
 // BEGIN SETUP CODE
@@ -719,6 +721,7 @@ function createMissionStagesBox(container, numOfCapsules, stages, timerRunning, 
     
 
     startButton.addEventListener('mouseenter', () => {
+        startCircle = document.querySelector('.startCircle');
         startCircle.style.transitionTimingFunction = 'cubic-bezier(0.77, 0, 0.175, 1)';
         startCircle.style.width = '27vmax';
         startCircle.style.height = '27vmax';
@@ -728,6 +731,7 @@ function createMissionStagesBox(container, numOfCapsules, stages, timerRunning, 
 
 
     startButton.addEventListener('mouseleave', () => {
+        startCircle = document.querySelector('.startCircle');
         startCircle.style.transitionTimingFunction = ' cubic-bezier(0.23, 1, 0.825, 0)';
         startCircle.style.width = '0%';
         startCircle.style.height = '0%';
@@ -766,7 +770,6 @@ function createMissionStagesBox(container, numOfCapsules, stages, timerRunning, 
 function startGlobalTimer(){
 
     if (!timerState) {timerState = !timerState;}
-    let startText = document.querySelector('.startText');
     let startButton = document.querySelector('.startButton');
         
     if (timerState){
@@ -775,7 +778,13 @@ function startGlobalTimer(){
 
     document.documentElement.style.setProperty('--timerStateColor', 'var(--rsxRed)');
     document.documentElement.style.setProperty('--timerHoverColor', 'white');
-    startText.textContent = 'STOP MISSION';
+
+    if(dashMode != 2){
+        let startText = document.querySelector('.startText');
+        startText.textContent = 'STOP MISSION';
+    } else {
+        startButton.innerHTML = `<div class="startText"></div> <img class="startButtonImg" src="../Image-Assets/StopButton.webp"> <div class="startCircle" id="startCircle"></div>`;
+    }
     
     
     startButton.style.backgroundColor = ('rgba(230,0, 0, 0.2)');
@@ -790,7 +799,12 @@ function stopGlobalTimer(){
     document.documentElement.style.setProperty('--timerStateColor', 'rgba(255,255,255,1)');
     document.documentElement.style.setProperty('--timerHoverColor', 'black');
     
-    startText.textContent = 'START MISSION';
+    if(dashMode != 2){
+        let startText = document.querySelector('.startText');
+        startText.textContent = 'START MISSION';
+    } else {
+        startButton.innerHTML = `<img class="startButtonImg" src="../Image-Assets/StartButton.webp"> <div class="startCircle" id="startCircle"></div>`;
+    }
     
     startButton.style.backgroundColor = ('rgba(255,255, 255, 0.2)');
 }
@@ -1827,6 +1841,7 @@ function resizeElements(){
     // console.log('adjusting title');
     // console.log(document.querySelector('title'))
     if (windowWidth <= 1000) {
+        dashMode = 2;
         title.style.opacity = 0;
         subtitle.style.opacity = 0;
         setTimeout(() => {
@@ -1857,6 +1872,12 @@ function resizeElements(){
             elem.textContent = `${currentShortenedTitle}.`;
         });
 
+        if (timerState){
+            document.querySelector('.startButton').innerHTML = ` <div class="startText"></div> <img class="startButtonImg" src="../Image-Assets/StopButton.webp"> <div class="startCircle" id="startCircle"></div>`;
+        } else {
+            document.querySelector('.startButton').innerHTML = `<div class="startText"></div> <img class="startButtonImg" src="../Image-Assets/StartButton.webp"> <div class="startCircle" id="startCircle"></div>`;
+        }
+
         document.querySelectorAll('.capStatText').forEach((elem, i) => {
             elem.innerHTML = `<img class="capsuleLogo" src="../Image-Assets/C${i+1}.webp">`;
         });
@@ -1870,13 +1891,28 @@ function resizeElements(){
             elem.style.width = '20%';
         });
 
+        document.querySelectorAll('.temperatureMeterCapsuleLogo').forEach((elem, i) => {
+            elem.style.display = 'none'
+        });
+
+        document.querySelectorAll('.pressureMeterCapsuleLogo').forEach((elem, i) => {
+            elem.style.display = 'none'
+        });
+
+        document.querySelector('.logoTextContainer').style.display = 'none';
+
         document.querySelector('.bottomText').style.display = 'none';
         document.querySelector('.bottomInfo').style.justifyContent = 'center';
 
         document.querySelector('.sliderContainer').style.width = '60%';
         document.querySelector('.bottomRightSection').style.width = '37.5%';
 
+        document.querySelector('.startButton').style.width = '35%';
+        document.querySelector('.missionTimer').style.width = '35%';
+        document.querySelector('.restartTimerButton').style.width = '25%';
+
     } else if (windowWidth <= 1200){
+        dashMode = 1;
         resetSizeToDefault();
         title.innerText = "RSX '24 Dashboard";
         subtitle.innerText = "COC";
@@ -1890,6 +1926,7 @@ function resizeElements(){
 
 
     } else {
+        dashMode = 0;
         resetSizeToDefault();
         title.innerText = "RockSatX 2024 Dashboard";
         subtitle.innerText = "College of the Canyons";
@@ -1920,6 +1957,12 @@ function resizeElements(){
                 elem.style.flexDirection = 'row'
             });
 
+            if (timerState){
+                document.querySelector('.startButton').innerHTML = `<div class="startText" id="startText" style="color: var(--timerNoHoverColor);">STOP MISSION</div> <div class="startCircle" id="startCircle"></div>`;
+            } else {
+                document.querySelector('.startButton').innerHTML = `<div class="startText" id="startText" style="color: var(--timerNoHoverColor);">START MISSION</div> <div class="startCircle" id="startCircle"></div>`;
+            }
+
             document.querySelectorAll('.capStatText').forEach((elem, i) => {
                 ifElementExists(elem, () => {
                     elem.innerHTML = `Capsule ${i+1}`;
@@ -1941,12 +1984,25 @@ function resizeElements(){
                 elem.style.width = '40%';
             });
 
+            document.querySelectorAll('.temperatureMeterCapsuleLogo').forEach((elem, i) => {
+                elem.style.display = 'block'
+            });
+
+            document.querySelectorAll('.pressureMeterCapsuleLogo').forEach((elem, i) => {
+                elem.style.display = 'block'
+            });
+
+            document.querySelector('.logoTextContainer').style.display = 'block';
             document.querySelector('.bottomText').style.display = 'block';
 
             document.querySelector('.bottomInfo').style.justifyContent = 'space-between';
 
             document.querySelector('.sliderContainer').style.width = '40%';
             document.querySelector('.bottomRightSection').style.width = 'auto';
+
+            document.querySelector('.startButton').style.width = '65%';
+            document.querySelector('.missionTimer').style.width = '20%';
+            document.querySelector('.restartTimerButton').style.width = '10%';
         }
     }
 }
