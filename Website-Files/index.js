@@ -14,6 +14,8 @@ let tabsArray = [];
 let boxElements = [];
 let timerState = false;
 
+let treesInfo = "";
+
 const startTime_T = -350;
 const endTime_T = 900;
 let currentTime_T = -350;
@@ -1200,7 +1202,11 @@ function createInfoMenu(){
     let contentCont = document.querySelector('.popUpContentContainer');
 
 
-    let infoText = createHTMLChildElement(contentCont, 'div', 'popUpInfoText', 'This is a test to see if this works.', 'popUpInfoText');
+    let infoText = createHTMLChildElement(contentCont, 'div', 'popUpInfoText', null, 'popUpInfoText');
+
+    setToTextFromDocument(infoText, 'Website-Files/description.txt');
+
+
 }
 
 function turnToLightMode() {
@@ -1309,7 +1315,10 @@ function checkIfPopUpScreenClicked() {
             //console.log('clicked outside box.');
             cleanElement(popUpContainer);
             //console.log('element cleaned');
-
+            popUpContainer.style.minWidth = '0';
+            // setTimeout(() => {
+            //     'the most important function ever'
+            // }, 50)
             popUpScreen.style.width = '0';
             popUpScreen.style.height = '0';
 
@@ -1321,6 +1330,10 @@ function checkIfPopUpScreenClicked() {
             document.querySelector('.mainContent').style.filter = '';
             popUpScreenOpen = false;
 
+
+            setTimeout(() => {
+                popUpContainer.style.minWidth = '410px';
+            }, 500);
         } else {
             //console.log('clicked inside box.');
         }
@@ -1937,5 +1950,17 @@ function resizeElements(){
         }
     }
 }
+
+// Grabs the text from a given document and returns the value to a variable
+async function setToTextFromDocument(element, documentPath){
+    let response;
+
+    let process = await fetch(documentPath)
+    .then((doc) => {return doc.text()})
+    .then((txt) => {txt = txt.toString(); element.innerText = txt});
+    
+    return process;
+}
+
 
 resizeElements();
