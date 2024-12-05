@@ -1,5 +1,5 @@
 /* 
-Cache-Control: no-cache
+Cache-Control: max-age=0
 
 /Website-Files/index.js
-    Cache-Control: no-cache
+    Cache-Control: max-age=0
